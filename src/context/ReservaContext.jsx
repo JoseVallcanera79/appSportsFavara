@@ -18,22 +18,26 @@ export function ReservaProvider({ children }) {
     localStorage.setItem("reservas", JSON.stringify(reservas));
   }, [reservas]);
 
-  //Eliminar reservas pasadas 24h
+  // Eliminar reservas pasadas (más de 24h antes)
   useEffect(() => {
-    const ahora = new Date()
+    const ahora = new Date();
 
     const limpiar = (lista) =>
       lista.filter((r) => {
-        const fechaHora = new Date(`${r.fecha}T${r.hora}`)
-        const difHoras = (ahora - fechaHora) / (1000 * 60 * 60)
-        return difHoras < 24
-      })
+        // r.fecha en formato "dd-mm-aa", lo convertimos a "yyyy-mm-dd"
+        const partes = r.fecha.split("-");
+        const fechaISO = `20${partes[2]}-${partes[1]}-${partes[0]}`;
+        const fechaHora = new Date(`${fechaISO}T${r.hora}`);
+
+        const difHoras = (ahora - fechaHora) / (1000 * 60 * 60);
+        return difHoras < 24; // conserva solo reservas con menos de 24h de antigüedad
+      });
 
     setReservas((prev) => ({
       fronton: limpiar(prev.fronton),
       padel: limpiar(prev.padel),
-    }))
-  }, [])
+    }));
+  }, []);
 
   const agregarReserva = (deporte, fecha, hora) => {
     if (!usuario) return;
@@ -84,7 +88,6 @@ export function ReservaProvider({ children }) {
     });
   };
 
-
   return (
     <ReservaContext.Provider
       value={{
@@ -93,7 +96,7 @@ export function ReservaProvider({ children }) {
         eliminarReserva,
         ultimaReserva,
         setUltimaReserva,
-        eliminarReservasDeUsuario
+        eliminarReservasDeUsuario,
       }}
     >
       {children}
