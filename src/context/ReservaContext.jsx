@@ -18,6 +18,23 @@ export function ReservaProvider({ children }) {
     localStorage.setItem("reservas", JSON.stringify(reservas));
   }, [reservas]);
 
+
+  useEffect(() => {
+    const ahora = new Date()
+
+    const limpiar = (lista) =>
+      lista.filter((r) => {
+        const fechaHora = new Date(`${r.fecha}T${r.hora}`)
+        const difHoras = (ahora - fechaHora) / (1000 * 60 * 60)
+        return difHoras < 24
+      })
+
+    setReservas((prev) => ({
+      fronton: limpiar(prev.fronton),
+      padel: limpiar(prev.padel),
+    }))
+  }, [])
+
   const agregarReserva = (deporte, fecha, hora) => {
     if (!usuario) return;
 
@@ -71,12 +88,13 @@ export function ReservaProvider({ children }) {
   return (
     <ReservaContext.Provider
       value={{
-         reservas,
-          agregarReserva,
-           eliminarReserva,
-            ultimaReserva,
-             setUltimaReserva,
-              eliminarReservasDeUsuario }}
+        reservas,
+        agregarReserva,
+        eliminarReserva,
+        ultimaReserva,
+        setUltimaReserva,
+        eliminarReservasDeUsuario
+      }}
     >
       {children}
     </ReservaContext.Provider>
