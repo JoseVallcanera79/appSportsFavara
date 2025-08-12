@@ -18,7 +18,7 @@ export function ReservaProvider({ children }) {
     localStorage.setItem("reservas", JSON.stringify(reservas));
   }, [reservas]);
 
-
+  //Eliminar reservas pasadas 24h
   useEffect(() => {
     const ahora = new Date()
 

@@ -5,7 +5,8 @@ import { Dialog } from "@headlessui/react";
 import { es } from "date-fns/locale";
 import { useReservas } from "../context/ReservaContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";  // <-- añadir
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import { isDayDisabled } from "../hooks/reservaAgosto.js";
 
 const generarHoras = (fechaSeleccionada, reservasDeporte) => {
   const horas = [];
@@ -86,6 +87,7 @@ function ReservaCalendario({ deporte }) {
         inline
         locale={es}
         calendarClassName="bg-white rounded-md shadow-md w-full"
+        filterDate={(date) => !isDayDisabled(date)} // Aquí aplicas el filtro para deshabilitar sábados y domingos de agosto
       />
 
       <Dialog open={modalAbierto} onClose={() => setModalAbierto(false)} className="relative z-50">
