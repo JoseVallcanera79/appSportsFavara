@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUsersContext } from "../context/UsersContext";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
+import { hashPassword } from "../utils/hashPassword";
 
 function RegisterPage() {
   const { handlerAddUser, users } = useUsersContext();
@@ -30,11 +31,22 @@ function RegisterPage() {
     return maxId + 1;
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userExists = users.some((user) => user.email === formData.email);
-    if (userExists) {
+    let existingUser = users.find((user) => user.email === formData.email);
+
+    if (existingUser) {
+      // Si el usuario viejo no tiene hash, actualizar contraseña
+      if (!/^[a-f0-9]{64}$/.test(existingUser.password)) {
+        const hashedPassword = await hashPassword(formData.password);
+        existingUser.password = hashedPassword;
+        localStorage.setItem("users", JSON.stringify(users));
+        login(existingUser);
+        navigate(existingUser.rol === "admin" ? "/usersList" : "/misreservas");
+        return;
+      }
+
       Swal.fire("Error", "Ya existe un usuario con ese correo.", "error");
       return;
     }
@@ -51,10 +63,7 @@ function RegisterPage() {
     };
 
     handlerAddUser(newUser);
-
-    // login automático
     login(newUser);
-
     navigate(newUser.rol === "admin" ? "/usersList" : "/misreservas");
   };
 

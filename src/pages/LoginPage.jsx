@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../context/AuthContext.jsx";
-import { hashPassword } from "../utils/hashPassword"; // ✅ importamos tu hash
+import { hashPassword } from "../utils/hashPassword";
 
 function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -43,16 +43,23 @@ function LoginPage() {
 
     // Buscar usuario en localStorage
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find((u) => u.email === formData.email);
+    let user = users.find((u) => u.email === formData.email);
 
     if (!user) {
       Swal.fire("Error", "Correo o contraseña incorrectos.", "error");
       return;
     }
 
-    // Comparar hash de la contraseña
-    const hashedPassword = await hashPassword(formData.password);
-    if (hashedPassword !== user.password) {
+    // Si el usuario tiene la contraseña sin hash (registro viejo)
+    if (!/^[a-f0-9]{64}$/.test(user.password)) {
+      const oldPasswordHash = await hashPassword(user.password);
+      user.password = oldPasswordHash;
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    const inputPasswordHash = await hashPassword(formData.password);
+
+    if (inputPasswordHash !== user.password) {
       Swal.fire("Error", "Correo o contraseña incorrectos.", "error");
       return;
     }
