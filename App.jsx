@@ -8,8 +8,12 @@ import Reservas from './src/pages/ReservasPage'
 import UsersList from './src/components/UsersList'
 import UsersApp from './src/UsersApp'
 import PerfilPage from './src/pages/PerfilPage'
+import { useAuth } from './src/context/AuthContext'
+import { Navigate } from 'react-router-dom'
 
 function App() {
+
+    const { usuario } = useAuth();
     return (
         <Routes>
             <Route path="/" element={<AppEsports />} />
@@ -17,9 +21,13 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/misreservas" element={<MenuPage />} />
             <Route path="/reservas" element={<Reservas />} />
-            <Route path="/usersList" element={<UsersList />}/>
-            <Route path="/usersApp" element={<UsersApp />}/>
-            <Route path="/perfil" element={<PerfilPage />}/>
+            <Route
+                path="/usersList"
+                element={
+                    usuario && usuario.rol === "admin" ? <UsersList /> : <Navigate to="/login" replace />
+                }
+            />
+            <Route path="/perfil" element={<PerfilPage />} />
         </Routes>
     )
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../context/AuthContext.jsx";
+import { hashPassword } from "../utils/hashPassword"; // ✅ importamos tu hash
 
 function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -19,9 +20,10 @@ function LoginPage() {
     setFormData({ ...formData, [id]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validaciones básicas
     if (!formData.email) {
       Swal.fire("Error", "El correo es obligatorio.", "error");
       return;
@@ -39,15 +41,24 @@ function LoginPage() {
       return;
     }
 
+    // Buscar usuario en localStorage
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const user = users.find((u) => u.email === formData.email);
 
-    if (!user || user.password !== formData.password) {
+    if (!user) {
       Swal.fire("Error", "Correo o contraseña incorrectos.", "error");
       return;
     }
 
-    login(user); // Actualiza el contexto y guarda en localStorage
+    // Comparar hash de la contraseña
+    const hashedPassword = await hashPassword(formData.password);
+    if (hashedPassword !== user.password) {
+      Swal.fire("Error", "Correo o contraseña incorrectos.", "error");
+      return;
+    }
+
+    // Login exitoso
+    login(user);
 
     Swal.fire({
       icon: "success",
@@ -56,7 +67,7 @@ function LoginPage() {
       timer: 1500,
       showConfirmButton: false,
     }).then(() => {
-      navigate("/misreservas");
+      navigate(user.rol === "admin" ? "/reservas" : "/misreservas");
     });
   };
 
