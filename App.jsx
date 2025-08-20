@@ -10,6 +10,7 @@ import UsersApp from './src/UsersApp'
 import PerfilPage from './src/pages/PerfilPage'
 import { useAuth } from './src/context/AuthContext'
 import { Navigate } from 'react-router-dom'
+import RecuperarLogin from './src/pages/RecuperarLogin'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/misreservas" element={<MenuPage />} />
             <Route path="/reservas" element={<Reservas />} />
+            <Route path="/recuperar-login" element={<RecuperarLogin />} />
             <Route
                 path="/usersList"
                 element={

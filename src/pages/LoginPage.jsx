@@ -115,6 +115,12 @@ function LoginPage() {
             Entrar
           </button>
         </form>
+        <p className="mt-4 text-sm text-center text-gray-500">
+          ¿Olvidaste la contraseña?{" "}
+          <Link to="/recuperar-login" className="text-blue-600 hover:underline">
+            Recuperar
+          </Link>
+        </p>
 
         <p className="mt-4 text-sm text-center text-gray-500">
           ¿No tenés una cuenta?{" "}
