@@ -80,7 +80,7 @@ function LoginPage() {
 
   return (
     <div className="flex items-center justify-center h-screen bg-cyan-950">
-      <div className={`bg-white p-8 rounded-2xl shadow-lg w-80 max-w-md ${animate ? "animate-bounce" : ""}`}>
+      <div className={`bg-white p-8 rounded-2xl shadow-lg w-80 max-w-md ${animate ? "animate-spin" : ""}`}>
         <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
