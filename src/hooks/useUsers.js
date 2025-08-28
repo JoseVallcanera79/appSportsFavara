@@ -21,9 +21,16 @@ export const useUsers = () => {
 
     const { eliminarReservasDeUsuario } = useReservas(); // <-- hook
 
-    useEffect(() => {
+   /* useEffect(() => {
         localStorage.setItem("users", JSON.stringify(users));
-    }, [users]);
+    }, [users]);*/
+
+    useEffect(() => {
+    // Guardamos los usuarios sin la contraseña
+    const usersWithoutPasswords = users.map(({ password, ...rest }) => rest);
+    localStorage.setItem("users", JSON.stringify(usersWithoutPasswords));
+}, [users]);
+
 
     const handlerAddUser = (user) => {
         const userExists = users.some((u) => u.id === user.id);
