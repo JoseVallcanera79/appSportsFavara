@@ -13,11 +13,13 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Función para iniciar sesión y guardar usuario
   const login = (user) => {
-    setUsuario(user);
-    localStorage.setItem("activeUser", JSON.stringify(user));
+    const { password, ...userWithoutPassword } = user;
+    setUsuario(userWithoutPassword);
+    // Guardamos en localStorage solo los datos sin la contraseña
+    localStorage.setItem("activeUser", JSON.stringify(userWithoutPassword));
   };
+
 
   // Función para cerrar sesión y eliminar usuario
   const logout = () => {
